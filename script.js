@@ -1,3 +1,4 @@
+/* Configuration */
 const messages = {
     1: "You shine in ways I can’t quite explain.",
     2: "You carry quiet strength — something that feels close to home.",
@@ -12,11 +13,10 @@ const messages = {
 };
 
 /**
- * CANVAS STARFIELD & SHOOTING STAR SYSTEM
+ * STARFIELD SYSTEM (Canvas)
  */
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
-
 let width, height;
 let stars = [];
 let shootingStars = [];
@@ -30,131 +30,106 @@ function resize() {
 }
 
 class Star {
-    constructor() {
-        this.reset();
-    }
-
+    constructor() { this.reset(); }
     reset() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.z = Math.random() * 2 + 0.5; // Depth factor
-        this.size = Math.random() * 1.5;
-        this.alpha = Math.random() * 0.5 + 0.3;
-        this.pulseSpeed = Math.random() * 0.02 + 0.005;
+        this.z = Math.random() * 2 + 0.5; // Depth
+        this.size = Math.random() * 1.5 + 0.5;
+        this.baseAlpha = Math.random() * 0.6 + 0.4; // Brighter
+        this.alpha = this.baseAlpha;
+        this.pulse = Math.random() * 0.05;
         this.pulseDir = 1;
     }
-
     update() {
-        // Parallax movement (slow drift)
-        this.x -= 0.2 * this.z;
-        if (this.x < 0) this.x = width; // Wrap around
+        this.x -= 0.15 * this.z;
+        if (this.x < 0) this.x = width;
 
         // Twinkle
-        this.alpha += this.pulseSpeed * this.pulseDir;
-        if (this.alpha > 0.9 || this.alpha < 0.3) this.pulseDir *= -1;
+        this.alpha += this.pulse * this.pulseDir;
+        if (this.alpha > 1 || this.alpha < 0.3) this.pulseDir *= -1;
     }
-
     draw() {
         ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * this.z * 0.8, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.size * (this.z * 0.5), 0, Math.PI * 2);
         ctx.fill();
     }
 }
 
 class ShootingStar {
-    constructor(isForced = false) {
-        this.reset(isForced);
+    constructor(forced = false) {
+        this.init(forced);
     }
-
-    reset(isForced = false) {
+    init(forced) {
         this.x = Math.random() * width;
-        this.y = Math.random() * height * 0.5; // Start in upper half
-        this.len = Math.random() * 80 + 100;
-        this.speed = Math.random() * 10 + 15;
-        this.size = Math.random() * 1 + 0.1;
-        // Direction
-        this.dx = -this.speed;
-        this.dy = this.speed * 0.4; // Diagonal down-left
-
+        this.y = Math.random() * height * 0.6;
+        this.len = Math.random() * 100 + 100;
+        this.speed = Math.random() * 10 + 10;
+        this.size = Math.random() * 2;
+        this.dirX = -1;
+        this.dirY = 0.5;
         this.active = true;
         this.opacity = 1;
 
-        // If forced (by user interaction), make it brighter and longer
-        if (isForced) {
-            this.len = 250;
+        if (forced) {
+            this.len = 300;
             this.speed = 25;
-            this.size = 2;
+            this.size = 3;
+            this.opacity = 1;
+            this.x = Math.random() * width * 0.8 + width * 0.1;
+            this.y = Math.random() * height * 0.3;
         }
     }
-
     update() {
-        if (!this.active) return;
-
-        this.x += this.dx;
-        this.y += this.dy;
-        this.len -= this.speed * 0.4; // Tail shrinks
-        this.opacity -= 0.01;
-
-        if (this.x < -this.len || this.y > height + this.len || this.opacity <= 0) {
-            this.active = false;
-        }
+        this.x += this.dirX * this.speed;
+        this.y += this.dirY * this.speed;
+        this.len -= this.speed * 0.2;
+        this.opacity -= 0.015;
+        if (this.len <= 0 || this.opacity <= 0) this.active = false;
     }
-
     draw() {
         if (!this.active) return;
+        const tailX = this.x - (this.dirX * this.len);
+        const tailY = this.y - (this.dirY * this.len);
 
-        const tailX = this.x - this.dx * 2; // Approximate tail direction prevention
-        const tailY = this.y - this.dy * 2;
+        const grad = ctx.createLinearGradient(this.x, this.y, tailX, tailY);
+        grad.addColorStop(0, `rgba(255,255,255,${this.opacity})`);
+        grad.addColorStop(1, "rgba(255,255,255,0)");
 
-        const gradient = ctx.createLinearGradient(this.x, this.y, this.x + this.len, this.y - (this.len * 0.4));
-        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
-        gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
-
-        ctx.strokeStyle = gradient;
+        ctx.strokeStyle = grad;
         ctx.lineWidth = this.size;
         ctx.lineCap = "round";
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.x - (this.dx / this.speed * this.len), this.y - (this.dy / this.speed * this.len)); // Geometric tail
+        ctx.lineTo(tailX, tailY);
         ctx.stroke();
     }
 }
 
 function initStars() {
     stars = [];
-    for (let i = 0; i < 400; i++) {
-        stars.push(new Star());
-    }
+    for (let i = 0; i < 300; i++) stars.push(new Star());
 }
 
 function animate() {
-    ctx.fillStyle = "#05070a"; // Clear with bg color (or use clearRect if opaque css bg)
+    // Clear canvas - Transparent so CSS background shows
     ctx.clearRect(0, 0, width, height);
 
-    // Draw Nebula (Simulated via gradient on canvas for best blend)
-    // Actually, CSS gradient is better for static background, Canvas for stars.
+    stars.forEach(s => { s.update(); s.draw(); });
 
-    stars.forEach(star => {
-        star.update();
-        star.draw();
-    });
+    // Random shooting star
+    if (Math.random() < 0.007) shootingStars.push(new ShootingStar());
 
-    // Manage Shooting Stars
-    if (Math.random() < 0.005) { // Random chance per frame
-        shootingStars.push(new ShootingStar());
-    }
-
-    shootingStars.forEach((star, index) => {
-        star.update();
-        star.draw();
-        if (!star.active) shootingStars.splice(index, 1);
+    shootingStars.forEach((s, i) => {
+        s.update();
+        s.draw();
+        if (!s.active) shootingStars.splice(i, 1);
     });
 
     requestAnimationFrame(animate);
 }
 
-// Initial Setup
 window.addEventListener('resize', resize);
 resize();
 animate();
@@ -163,165 +138,105 @@ animate();
 /**
  * APP LOGIC
  */
-const introSequence = document.getElementById('intro-sequence');
-const introText = document.getElementById('intro-text');
-const interactionArea = document.getElementById('interaction-area');
-const magicInput = document.getElementById('magic-input');
-const submitBtn = document.getElementById('submit-btn');
-const messageDisplay = document.getElementById('message-display');
-const messageText = document.getElementById('message-text');
-const nextBtn = document.getElementById('next-btn');
-const finishBtn = document.getElementById('finish-btn');
-const endingSequence = document.getElementById('ending-sequence');
-const endTextContainer = document.getElementById('end-text-container');
+const startOverlay = document.getElementById('start-overlay');
+const enterBtn = document.getElementById('enter-btn');
+const app = document.getElementById('app');
 const bgm = document.getElementById('bgm');
 const musicToggle = document.getElementById('music-toggle');
-const iconSoundOn = document.getElementById('icon-sound-on');
-const iconSoundOff = document.getElementById('icon-sound-off');
+const iconOn = document.getElementById('icon-sound-on');
+const iconOff = document.getElementById('icon-sound-off');
 
-let seenNumbers = new Set();
-let isMusicPlaying = false;
-let hasStarted = false;
+// Sections
+const introSeq = document.getElementById('intro-sequence');
+const interactArea = document.getElementById('interaction-area');
+const magicInput = document.getElementById('magic-input');
+const inputContainer = document.querySelector('.input-container');
+const messageDisplay = document.getElementById('message-display');
+const nextBtn = document.getElementById('next-btn');
+const finishBtn = document.getElementById('finish-btn');
+const endingSeq = document.getElementById('ending-sequence');
 
-bgm.volume = 0.3;
+bgm.volume = 0.4;
+let isPlaying = false;
 
-// --- Intro ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Attempt play on load? Unlikely to work, but good to try muted if possible (not doing here)
+// 1. ENTER EXPERIENCE
+enterBtn.addEventListener('click', () => {
+    // Play Audio
+    bgm.play().then(() => {
+        isPlaying = true;
+        updateIcon();
+    }).catch(e => console.log(e));
+
+    // Fade out overlay
+    startOverlay.style.opacity = '0';
     setTimeout(() => {
-        introText.classList.remove('text-fade-in');
-        introText.classList.add('text-fade-out');
-
-        introText.addEventListener('animationend', () => {
-            introSequence.classList.add('hidden');
-            interactionArea.classList.remove('hidden');
-            interactionArea.classList.add('text-fade-in');
-            magicInput.focus();
-        }, { once: true });
-    }, 4500);
+        startOverlay.classList.add('hidden');
+        app.classList.remove('hidden'); // Show app
+        startIntro();
+    }, 1500);
 });
 
-// --- Audio Handling ---
-function tryPlayAudio() {
-    if (!hasStarted) {
-        hasStarted = true;
-        bgm.play().then(() => {
-            isMusicPlaying = true;
-            updateMusicIcon();
-        }).catch(err => {
-            console.log("Auto-play blocked, waiting for explicit interaction.", err);
-        });
-    }
-}
-
-// Global unlock on first click anywhere
-document.body.addEventListener('click', () => {
-    if (!isMusicPlaying) tryPlayAudio();
-}, { once: true });
-
-
-musicToggle.addEventListener('click', (e) => {
-    e.stopPropagation(); // Don't trigger the body listener
-    if (bgm.paused) {
-        bgm.play();
-        isMusicPlaying = true;
-    } else {
-        bgm.pause();
-        isMusicPlaying = false;
-    }
-    updateMusicIcon();
-});
-
-function updateMusicIcon() {
-    if (!bgm.paused) {
-        iconSoundOff.classList.add('hidden');
-        iconSoundOn.classList.remove('hidden');
-        musicToggle.style.opacity = '1';
-    } else {
-        iconSoundOn.classList.add('hidden');
-        iconSoundOff.classList.remove('hidden');
-        musicToggle.style.opacity = '0.7';
-    }
-}
-
-// --- Interaction ---
-submitBtn.addEventListener('click', handleInput);
-magicInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') handleInput();
-});
-
-nextBtn.addEventListener('click', () => {
-    // Fade out message
-    messageDisplay.classList.remove('text-fade-in');
-    messageDisplay.classList.add('text-fade-out');
-
+function startIntro() {
     setTimeout(() => {
-        messageDisplay.classList.add('hidden');
-        messageDisplay.classList.remove('text-fade-out'); // Reset for next time
-
-        // Show input again
-        document.getElementById('prompt-text').classList.remove('hidden');
-        magicInput.parentElement.classList.remove('hidden');
-        magicInput.parentElement.classList.add('text-fade-in');
-        finishBtn.classList.remove('hidden');
-        finishBtn.classList.add('text-fade-in');
-
-        magicInput.value = '';
-        magicInput.focus();
-    }, 1000);
-});
-
-finishBtn.addEventListener('click', triggerEnding);
-
-function handleInput() {
-    // Double check audio
-    tryPlayAudio();
-
-    const val = parseInt(magicInput.value);
-
-    if (val >= 1 && val <= 10) {
-        // Trigger forced shooting star
-        shootingStars.push(new ShootingStar(true));
-
-        // UI Transitions
-        magicInput.parentElement.classList.remove('text-fade-in');
-        magicInput.parentElement.classList.add('text-fade-out');
-        document.getElementById('prompt-text').classList.add('hidden');
-        finishBtn.classList.add('hidden');
+        // Fade out initial text
+        introSeq.querySelector('h1').style.animation = 'fadeOut 1.5s forwards';
 
         setTimeout(() => {
-            magicInput.parentElement.classList.add('hidden');
-            magicInput.parentElement.classList.remove('text-fade-out'); // Reset class
-            displayMessage(val);
-        }, 1000);
+            introSeq.classList.add('hidden');
+            interactArea.classList.remove('hidden');
+        }, 1500);
+    }, 4000);
+}
+
+// 2. INTERACTION
+const submitBtn = document.getElementById('submit-btn');
+
+submitBtn.addEventListener('click', processInput);
+magicInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') processInput();
+});
+
+function processInput() {
+    const val = parseInt(magicInput.value);
+    if (val >= 1 && val <= 10) {
+        // Valid
+        shootingStars.push(new ShootingStar(true)); // Big star
+
+        // Hide input
+        inputContainer.style.display = 'none';
+        document.getElementById('prompt-text').style.display = 'none';
+        finishBtn.style.display = 'none';
+
+        // Show Message
+        messageDisplay.classList.remove('hidden');
+        document.getElementById('message-text').textContent = messages[val];
+        document.getElementById('message-text').classList.add('text-blur-in');
 
     } else {
-        // Shake effect via CSS class
-        const wrapper = magicInput.parentElement;
-        wrapper.style.transform = "translateX(5px)";
-        setTimeout(() => wrapper.style.transform = "translateX(-5px)", 50);
-        setTimeout(() => wrapper.style.transform = "translateX(5px)", 100);
-        setTimeout(() => wrapper.style.transform = "translateX(0)", 150);
+        // Shake
+        inputContainer.style.transform = "translateX(5px)";
+        setTimeout(() => inputContainer.style.transform = "translateX(0)", 100);
     }
 }
 
-function displayMessage(num) {
-    messageText.textContent = messages[num];
-    messageDisplay.classList.remove('hidden');
-    messageDisplay.classList.add('text-fade-in');
-}
+nextBtn.addEventListener('click', () => {
+    messageDisplay.classList.add('hidden');
+    inputContainer.style.display = 'flex';
+    document.getElementById('prompt-text').style.display = 'block';
+    finishBtn.classList.remove('hidden');
+    finishBtn.style.display = 'inline-block';
 
-function triggerEnding() {
-    interactionArea.classList.add('text-fade-out');
+    magicInput.value = '';
+    magicInput.focus();
+});
 
-    setTimeout(() => {
-        interactionArea.classList.add('hidden');
-        endingSequence.classList.remove('hidden');
-        playEndingSequence();
-    }, 1500);
-}
+finishBtn.addEventListener('click', () => {
+    interactArea.classList.add('hidden');
+    endingSeq.classList.remove('hidden');
+    playEnding();
+});
 
-function playEndingSequence() {
+function playEnding() {
     const lines = [
         "Happy New Year.",
         "Here’s to another great year",
@@ -332,25 +247,49 @@ function playEndingSequence() {
     ];
 
     let delay = 500;
+    const container = document.getElementById('end-text-container');
 
-    lines.forEach((line) => {
+    lines.forEach(line => {
         setTimeout(() => {
             const p = document.createElement('p');
             p.textContent = line;
-            p.classList.add('final-line', 'text-fade-in');
-            if (line.trim() === "") p.style.height = "1rem";
-            endTextContainer.appendChild(p);
+            p.className = 'final-line';
+            if (line.trim() === "") p.style.height = '1rem';
+            container.appendChild(p);
         }, delay);
         delay += 3000;
     });
 
     setTimeout(() => {
-        const sig = document.querySelector('.signature');
-        sig.classList.remove('hidden');
-        sig.classList.add('text-fade-in');
-        // Final volley of shooting stars
-        shootingStars.push(new ShootingStar(true));
-        setTimeout(() => shootingStars.push(new ShootingStar(true)), 500);
-        setTimeout(() => shootingStars.push(new ShootingStar(true)), 1000);
+        document.querySelector('.signature').classList.remove('hidden');
+        document.querySelector('.signature').classList.add('text-blur-in');
+
+        // Final volley
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => shootingStars.push(new ShootingStar(true)), i * 400);
+        }
     }, delay + 1000);
+}
+
+
+// 3. AUDIO TOGGLE
+musicToggle.addEventListener('click', () => {
+    if (bgm.paused) {
+        bgm.play();
+        isPlaying = true;
+    } else {
+        bgm.pause();
+        isPlaying = false;
+    }
+    updateIcon();
+});
+
+function updateIcon() {
+    if (isPlaying) {
+        iconOff.classList.add('hidden');
+        iconOn.classList.remove('hidden');
+    } else {
+        iconOn.classList.add('hidden');
+        iconOff.classList.remove('hidden');
+    }
 }

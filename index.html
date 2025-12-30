@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A calm, personal New Year experience.">
     <title>To, yours truly</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,58 +12,74 @@
 </head>
 
 <body>
-    <!-- Background & Canvas -->
-    <canvas id="starfield"></canvas>
-    <div class="overlay-vignette"></div>
 
-    <!-- Background Audio -->
-    <audio id="bgm" loop>
+    <!-- Visual Background Layers -->
+    <div id="space-background"></div> <!-- CSS Gradient Nebula -->
+    <canvas id="starfield"></canvas> <!-- JS Animated Stars -->
+    <div class="vignette"></div> <!-- Dark corners -->
+
+    <!-- Audio -->
+    <audio id="bgm" loop preload="auto">
         <source src="assets/Nightsky.mp3" type="audio/mpeg">
-        <source src="assets/bgm.mp3" type="audio/mpeg"> <!-- Fallback -->
+        <source src="assets/bgm.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- Music Control -->
-    <button id="music-toggle" class="music-btn fade-in-delayed" aria-label="Toggle Music">
-        <svg id="icon-sound-off" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="1" y1="1" x2="23" y2="23"></line>
-            <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
-        </svg>
-        <svg id="icon-sound-on" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M9 18V5l12-2v13"></path>
-            <circle cx="6" cy="18" r="3"></circle>
-            <circle cx="18" cy="16" r="3"></circle>
-        </svg>
-    </button>
+    <!-- UI Overlay for Click-to-Start (Premium feel + Audio fix) -->
+    <div id="start-overlay">
+        <div class="start-content">
+            <p class="fade-in-slow">The universe is waiting.</p>
+            <button id="enter-btn" class="enter-btn fade-in-delay">Enter Experience</button>
+        </div>
+    </div>
 
-    <!-- Main Content Area -->
-    <main id="app">
-        <div id="intro-sequence" class="sequence-container">
-            <h1 id="intro-text" class="text-fade-in">Tonight, the universe listens.</h1>
+    <!-- Main Application -->
+    <main id="app" class="hidden">
+
+        <!-- Controls -->
+        <button id="music-toggle" class="music-btn" aria-label="Toggle Music">
+            <svg id="icon-sound-on" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+            <svg id="icon-sound-off" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+                <path d="M9 9v6a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"></path>
+            </svg>
+        </button>
+
+        <!-- Intro -->
+        <div id="intro-sequence">
+            <h1 id="intro-text" class="text-blur-in">Tonight, the universe listens.</h1>
         </div>
 
+        <!-- Interactive Area -->
         <div id="interaction-area" class="hidden">
-            <h2 id="prompt-text">Choose a number between 1 and 10.</h2>
+            <h2 id="prompt-text" class="fade-in-up">Choose a number between 1 and 10.</h2>
 
-            <div class="input-wrapper">
+            <div class="input-container fade-in-up delay-1">
                 <input type="number" id="magic-input" min="1" max="10" placeholder="?" autocomplete="off">
                 <button id="submit-btn" class="submit-arrow">→</button>
             </div>
 
             <div id="message-display" class="hidden">
                 <p id="message-text"></p>
-                <button id="next-btn" class="secondary-btn">Choose another number</button>
+                <div class="btn-group">
+                    <button id="next-btn" class="glass-btn">Another Star</button>
+                </div>
             </div>
 
-            <button id="finish-btn" class="text-btn hidden">I think I've seen enough...</button>
+            <button id="finish-btn" class="text-link hidden">I've seen enough...</button>
         </div>
 
-        <div id="ending-sequence" class="hidden text-center">
+        <!-- Ending -->
+        <div id="ending-sequence" class="hidden">
             <div id="end-text-container"></div>
             <p class="signature hidden">— To, yours truly</p>
         </div>
+
     </main>
 
     <script src="script.js"></script>

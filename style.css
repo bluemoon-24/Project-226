@@ -1,9 +1,9 @@
 :root {
-    --bg-color: #05070a;
-    --text-color: #e0e6ed;
-    --accent-glow: rgba(100, 149, 237, 0.4);
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --bg-deep: #05070a;
+    --text-primary: #f0f4f8;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent: rgba(100, 200, 255, 0.5);
     --font-main: 'Outfit', sans-serif;
 }
 
@@ -11,8 +11,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 body,
@@ -20,306 +18,318 @@ html {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background-color: var(--bg-color);
+    color: var(--text-primary);
     font-family: var(--font-main);
-    color: var(--text-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background-color: var(--bg-deep);
+    /* Fallback */
 }
 
-/* --- Canvas Background --- */
+/* --- LAYERS --- */
+
+/* 1. CSS Nebula Background */
+#space-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background:
+        radial-gradient(circle at 50% 120%, #1a1b3a 0%, #05070a 60%),
+        radial-gradient(circle at 20% 20%, rgba(50, 40, 90, 0.2), transparent 40%),
+        radial-gradient(circle at 80% 50%, rgba(40, 60, 90, 0.2), transparent 40%);
+    animation: nebulaPulse 15s infinite alternate;
+}
+
+@keyframes nebulaPulse {
+    0% {
+        filter: brightness(1);
+        transform: scale(1);
+    }
+
+    100% {
+        filter: brightness(1.2);
+        transform: scale(1.02);
+    }
+}
+
+/* 2. Canvas Stars */
 #starfield {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
-    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    z-index: 1;
+    mix-blend-mode: screen;
+    /* Helps stars pop */
 }
 
-.overlay-vignette {
+/* 3. Vignette */
+.vignette {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
+    z-index: 2;
+    background: radial-gradient(circle, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
     pointer-events: none;
-    z-index: 0;
-    background: radial-gradient(transparent 50%, rgba(0, 0, 0, 0.6) 100%);
 }
 
-/* --- UI & Typography --- */
+/* 4. UI Content */
 #app {
+    position: relative;
+    /* On top of fixed bgs */
     z-index: 10;
     width: 100%;
-    max-width: 900px;
-    padding: 2rem;
-    text-align: center;
-    position: relative;
-    min-height: 300px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
+    padding: 2rem;
 }
 
-h1,
-h2,
-p {
-    font-weight: 300;
-    letter-spacing: 0.08em;
-    line-height: 1.6;
-    text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+/* 5. Start Overlay */
+#start-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    background-color: var(--bg-deep);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 1.5s ease;
 }
+
+.start-content p {
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+}
+
+.enter-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 1rem 3rem;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.4s;
+    text-transform: uppercase;
+}
+
+.enter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.15em;
+}
+
+/* --- TYPOGRAPHY & COMPONENTS --- */
 
 h1 {
-    font-size: 3.5rem;
-    margin-bottom: 2rem;
-    background: linear-gradient(to bottom, #fff, #aab);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+    font-size: 3rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    margin-bottom: 1rem;
 }
 
 h2 {
     font-size: 2rem;
-    margin-bottom: 2.5rem;
+    font-weight: 200;
     color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2.5rem;
 }
 
-p {
-    font-size: 1.6rem;
-    color: rgba(255, 255, 255, 0.85);
-    max-width: 700px;
-    margin: 0 auto;
+#message-text {
+    font-size: 1.8rem;
+    line-height: 1.5;
+    max-width: 800px;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* Input Styles - Glassmorphism */
-.input-wrapper {
+.input-container {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-    position: relative;
-    background: var(--glass-bg);
-    padding: 1.5rem 2.5rem;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
+    gap: 1rem;
+    background: var(--glass);
+    padding: 1rem 2rem;
+    border-radius: 50px;
     border: 1px solid var(--glass-border);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s;
 }
 
-.input-wrapper:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.15);
+.input-container:hover {
+    transform: scale(1.02);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
-input[type="number"] {
-    background: transparent;
+input {
+    background: none;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-family: var(--font-main);
-    width: 80px;
+    width: 60px;
     text-align: center;
     outline: none;
-    transition: border-color 0.4s;
-}
-
-input[type="number"]:focus {
-    border-color: #fff;
 }
 
 .submit-arrow {
     background: none;
     border: none;
     color: #fff;
-    font-size: 2rem;
+    font-size: 1.5rem;
     cursor: pointer;
     opacity: 0.6;
-    transition: all 0.3s ease;
+    transition: all 0.3s;
 }
 
 .submit-arrow:hover {
     opacity: 1;
-    transform: translateX(5px) scale(1.1);
-    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+    transform: translateX(5px);
 }
 
-/* Buttons */
-.secondary-btn {
-    background: var(--glass-bg);
+.glass-btn {
+    background: var(--glass);
     border: 1px solid var(--glass-border);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    font-family: var(--font-main);
-    cursor: pointer;
-    font-size: 1rem;
-    letter-spacing: 0.05em;
-    transition: all 0.4s ease;
-    margin-top: 2rem;
-    backdrop-filter: blur(5px);
-}
-
-.secondary-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-2px);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-size: 1rem;
+    transition: all 0.3s;
 }
 
-.text-btn {
+.glass-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.text-link {
     background: none;
     border: none;
-    font-family: var(--font-main);
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 0.9rem;
-    padding: 1rem;
-    margin-top: 4rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-top: 3rem;
     cursor: pointer;
-    transition: all 0.3s;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    transition: color 0.3s;
 }
 
-.text-btn:hover {
+.text-link:hover {
     color: #fff;
-    letter-spacing: 0.15em;
 }
 
-/* Animations Classes */
-.text-fade-in {
-    animation: fadeInUp 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+.music-btn {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    background: var(--glass);
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+    backdrop-filter: blur(4px);
+    z-index: 100;
 }
 
-.text-fade-out {
-    animation: fadeOutUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+.music-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
 }
 
-.pulse-glow {
-    animation: glowText 4s ease-in-out infinite alternate;
+/* --- ANIMATIONS --- */
+
+.hidden {
+    display: none !important;
+}
+
+/* Utility Classes */
+.text-blur-in {
+    animation: blurIn 2.5s ease forwards;
+}
+
+.fade-in-up {
+    animation: fadeInUp 1.5s ease forwards;
+    opacity: 0;
+}
+
+.delay-1 {
+    animation-delay: 0.5s;
+}
+
+@keyframes blurIn {
+    0% {
+        opacity: 0;
+        filter: blur(20px);
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: scale(1);
+    }
 }
 
 @keyframes fadeInUp {
     0% {
         opacity: 0;
-        transform: translateY(30px) scale(0.95);
-        filter: blur(10px);
+        transform: translateY(20px);
     }
 
     100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-    }
-}
-
-@keyframes fadeOutUp {
-    0% {
         opacity: 1;
         transform: translateY(0);
-        filter: blur(0);
     }
+}
 
-    100% {
+@keyframes fadeOut {
+    to {
         opacity: 0;
-        transform: translateY(-30px);
-        filter: blur(10px);
+        visibility: hidden;
     }
 }
 
-@keyframes glowText {
-    from {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    }
-
-    to {
-        text-shadow: 0 0 25px rgba(255, 255, 255, 0.6), 0 0 15px var(--accent-glow);
-    }
-}
-
-/* Music Control */
-.music-btn {
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-    background: var(--glass-bg);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 1px solid var(--glass-border);
-    color: rgba(255, 255, 255, 0.6);
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    backdrop-filter: blur(5px);
-}
-
-.music-btn:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.1);
-}
-
-.fade-in-delayed {
-    opacity: 0;
-    animation: fadeInSimple 2s ease forwards 1s;
-}
-
-@keyframes fadeInSimple {
-    to {
-        opacity: 1;
-    }
-}
-
-/* Final Message */
+/* Final Sequence Text */
 .final-line {
-    opacity: 0;
     display: block;
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    color: #fff;
-}
-
-.signature {
-    margin-top: 4rem;
-    font-size: 1.1rem;
-    font-style: italic;
-    letter-spacing: 0.1em;
     opacity: 0;
-    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    animation: fadeInUp 2s ease forwards;
 }
 
-/* Mobile Responsiveness */
+/* Responsive */
 @media (max-width: 600px) {
     h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
 
     h2 {
         font-size: 1.5rem;
     }
 
-    p {
-        font-size: 1.2rem;
-    }
-
-    .input-wrapper {
-        padding: 1rem 1.5rem;
+    #message-text {
+        font-size: 1.4rem;
     }
 }
