@@ -1,0 +1,301 @@
+:root {
+    --bg-color: #05070a;
+    --text-color: #e0e6ed;
+    --accent-glow: rgba(100, 149, 237, 0.2);
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --font-main: 'Outfit', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    font-family: var(--font-main);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Background & Universe --- */
+.sky-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    overflow: hidden;
+}
+
+.nebula {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120vw;
+    height: 120vw;
+    transform: translate(-50%, -50%);
+    background: 
+        radial-gradient(circle at 50% 50%, rgba(76, 29, 149, 0.1), transparent 60%),
+        radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1), transparent 50%);
+    filter: blur(60px);
+    opacity: 0.6;
+    animation: nebula-pulse 20s infinite alternate;
+}
+
+@keyframes nebula-pulse {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Star Layers */
+/* We will generate stars using minimal box-shadows effectively */
+.stars-1, .stars-2, .stars-3 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+}
+
+/* Simplified Star Generation via repeat for demo (in production usually more randomization) */
+.stars-1 {
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow: 
+        10vw 20vh #fff, 30vw 80vh #fff, 50vw 10vh #fff, 70vw 60vh #fff, 90vw 30vh #fff,
+        15vw 90vh #fff, 35vw 40vh #fff, 55vw 70vh #fff, 85vw 10vh #fff, 25vw 50vh #fff,
+        5vw 5vh #fff, 45vw 25vh #fff, 65vw 85vh #fff, 95vw 15vh #fff, 12vw 38vh #fff,
+        60vw 12vh #fff, 80vw 22vh #fff, 40vw 95vh #fff, 20vw 65vh #fff, 75vw 55vh #fff;
+    opacity: 0.4;
+    animation: twinkle 4s infinite ease-in-out;
+}
+.stars-2 {
+    width: 3px;
+    height: 3px;
+    box-shadow: 
+        12vw 18vh #fff, 32vw 78vh #fff, 52vw 12vh #fff, 72vw 58vh #fff, 92vw 28vh #fff,
+        18vw 88vh #fff, 38vw 38vh #fff, 58vw 68vh #fff, 88vw 12vh #fff, 28vw 52vh #fff;
+    opacity: 0.6;
+    animation: twinkle 6s infinite ease-in-out reverse;
+}
+.stars-3 {
+    width: 2px;
+    height: 2px;
+    box-shadow: 
+        5vw 90vh #fff, 25vw 20vh #fff, 45vw 60vh #fff, 85vw 20vh #fff, 65vw 50vh #fff;
+    opacity: 0.8;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+}
+
+/* Shooting Star */
+.shooting-star {
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    width: 100px;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,1));
+    filter: drop-shadow(0 0 4px white);
+    transform: rotate(-45deg);
+    animation: shoot 2s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes shoot {
+    0% { transform: translate(0, 0) rotate(-45deg) scaleX(0); opacity: 1; }
+    50% { opacity: 1; }
+    100% { transform: translate(100vw, 100vh) rotate(-45deg) scaleX(1); opacity: 0; }
+}
+
+/* --- UI & Typography --- */
+#app {
+    z-index: 10;
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1, h2, p {
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+}
+
+h1 { font-size: 2.5rem; margin-bottom: 2rem; }
+h2 { font-size: 1.8rem; margin-bottom: 2rem; color: rgba(255,255,255,0.9); }
+p { font-size: 1.4rem; color: rgba(255,255,255,0.8); }
+
+.hidden {
+    display: none !important;
+}
+
+/* Input Styles */
+.input-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+input[type="number"] {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    font-size: 2rem;
+    font-family: var(--font-main);
+    width: 80px;
+    text-align: center;
+    padding: 0.5rem;
+    outline: none;
+    transition: border-color 0.3s;
+    -moz-appearance: textfield; /* Remove spinner */
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"]:focus {
+    border-color: #fff;
+}
+
+.submit-arrow {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.submit-arrow:hover {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+/* Buttons */
+.secondary-btn, .text-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.7);
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    font-family: var(--font-main);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.secondary-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border-color: rgba(255,255,255,0.4);
+}
+
+.text-btn {
+    border: none;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    margin-top: 3rem;
+    opacity: 0.5;
+}
+.text-btn:hover {
+    opacity: 1;
+    background: none;
+}
+
+/* Animations Classes */
+.text-fade-in {
+    animation: fadeInUp 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.text-fade-out {
+    animation: fadeOutUp 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.pulse-glow {
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); filter: blur(5px); }
+    100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes fadeOutUp {
+    0% { opacity: 1; transform: translateY(0); filter: blur(0); }
+    100% { opacity: 0; transform: translateY(-20px); filter: blur(5px); }
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+    to { text-shadow: 0 0 20px rgba(255,255,255,0.4), 0 0 10px rgba(100, 149, 237, 0.3); }
+}
+
+/* Music Control */
+.music-btn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    z-index: 100;
+    transition: color 0.3s;
+}
+.music-btn:hover {
+    color: #fff;
+}
+
+/* Final Message */
+.final-line {
+    opacity: 0;
+    display: block;
+    margin-bottom: 1rem;
+    /* Animation applied via JS for staggering */
+}
+
+.signature {
+    margin-top: 3rem;
+    font-size: 1rem;
+    font-style: italic;
+    opacity: 0;
+    color: rgba(255,255,255,0.6);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+    p { font-size: 1.1rem; }
+}
