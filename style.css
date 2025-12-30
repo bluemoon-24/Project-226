@@ -380,12 +380,30 @@ input {
 }
 
 /* Final Sequence Text */
+
 .final-line {
     display: block;
     opacity: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.6rem;
-    animation: fadeInUp 2s ease forwards;
+    margin-bottom: 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    font-style: italic;
+    color: #fcfcfc;
+    text-shadow: 0 0 15px rgba(255, 200, 150, 0.3);
+    animation: fadeInUp 2.5s ease forwards;
+    letter-spacing: 0.02em;
+}
+
+.signature {
+    margin-top: 4rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Responsive */
