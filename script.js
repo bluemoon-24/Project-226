@@ -35,8 +35,8 @@ class Star {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
         this.z = Math.random() * 2 + 0.5; // Depth
-        this.size = Math.random() * 1.5 + 0.5;
-        this.baseAlpha = Math.random() * 0.6 + 0.4; // Brighter
+        this.size = Math.random() * 2.0 + 1.0; // BIGGER
+        this.baseAlpha = Math.random() * 0.5 + 0.5; // BRIGHTER (0.5 to 1.0)
         this.alpha = this.baseAlpha;
         this.pulse = Math.random() * 0.05;
         this.pulseDir = 1;
