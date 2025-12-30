@@ -20,6 +20,8 @@ const ctx = canvas.getContext('2d');
 let width, height;
 let stars = [];
 let shootingStars = [];
+let particles = []; // Floating dust
+let mouseX = 0, mouseY = 0;
 
 function resize() {
     width = window.innerWidth;
@@ -27,7 +29,15 @@ function resize() {
     canvas.width = width;
     canvas.height = height;
     initStars();
+    initParticles();
 }
+
+// Parallax Mouse Tracking
+document.addEventListener('mousemove', (e) => {
+    // Center origin (0,0) handling
+    mouseX = (e.clientX - width / 2) * 0.05;
+    mouseY = (e.clientY - height / 2) * 0.05;
+});
 
 class Star {
     constructor() { this.reset(); }
@@ -35,24 +45,53 @@ class Star {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
         this.z = Math.random() * 2 + 0.5; // Depth
-        this.size = Math.random() * 2.0 + 1.0; // BIGGER
-        this.baseAlpha = Math.random() * 0.5 + 0.5; // BRIGHTER (0.5 to 1.0)
+        this.size = Math.random() * 2.0 + 1.0;
+        this.baseAlpha = Math.random() * 0.5 + 0.3;
         this.alpha = this.baseAlpha;
-        this.pulse = Math.random() * 0.05;
+        this.pulse = Math.random() * 0.03;
         this.pulseDir = 1;
     }
     update() {
-        this.x -= 0.15 * this.z;
+        // Standard drift + Mouse Parallax
+        this.x -= (0.1 * this.z) + (mouseX * 0.01 * this.z);
+        this.y -= (mouseY * 0.01 * this.z);
+
         if (this.x < 0) this.x = width;
+        if (this.x > width) this.x = 0;
+        if (this.y < 0) this.y = height;
+        if (this.y > height) this.y = 0;
 
         // Twinkle
         this.alpha += this.pulse * this.pulseDir;
-        if (this.alpha > 1 || this.alpha < 0.3) this.pulseDir *= -1;
+        if (this.alpha > 0.9 || this.alpha < 0.2) this.pulseDir *= -1;
     }
     draw() {
         ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * (this.z * 0.5), 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.size * (this.z * 0.4), 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5;
+        this.speedY = Math.random() * 0.3 + 0.1;
+        this.alpha = Math.random() * 0.4;
+    }
+    update() {
+        this.y -= this.speedY; // Float up
+        if (this.y < 0) {
+            this.y = height;
+            this.x = Math.random() * width;
+        }
+    }
+    draw() {
+        ctx.fillStyle = `rgba(150, 220, 255, ${this.alpha})`; // Blue-ish tint
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
     }
 }
@@ -112,10 +151,19 @@ function initStars() {
     for (let i = 0; i < 300; i++) stars.push(new Star());
 }
 
+function initParticles() {
+    particles = [];
+    for (let i = 0; i < 100; i++) particles.push(new Particle());
+}
+
 function animate() {
     // Clear canvas - Transparent so CSS background shows
     ctx.clearRect(0, 0, width, height);
 
+    // Draw Particles (Background layer)
+    particles.forEach(p => { p.update(); p.draw(); });
+
+    // Draw Stars
     stars.forEach(s => { s.update(); s.draw(); });
 
     // Random shooting star
