@@ -278,28 +278,30 @@ input:focus {
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
-/* Prominent Describe/Reveal Button */
-.reveal-btn {
-    display: inline-block;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    border: 1px solid rgba(255, 255, 255, 0.3);
+/* Prominent Submit Arrow */
+.submit-arrow {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: #fff;
-    font-family: 'Outfit', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 1rem;
-    padding: 1rem 3rem;
-    border-radius: 30px;
+    font-size: 1.8rem;
     cursor: pointer;
-    transition: all 0.4s;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-left: 1rem;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
 }
 
-.reveal-btn:hover {
+.submit-arrow:hover {
     background: rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.3em;
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(100, 200, 255, 0.4);
+    transform: translateX(5px) scale(1.1);
+    border-color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 }
 
 .glass-btn {
