@@ -208,6 +208,7 @@ html {
 }
 
 /* 5. Start Overlay */
+/* 5. Start Overlay - Dreamy Glass */
 #start-overlay {
     position: fixed;
     top: 0;
@@ -215,107 +216,90 @@ html {
     width: 100%;
     height: 100%;
     z-index: 999;
-    background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
-    /* Visible BG */
+    /* Transparent dark glass to show Aurora behind */
+    background: rgba(2, 1, 17, 0.4);
+    backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
     align-items: center;
     transition: opacity 1.5s ease;
 }
 
-.start-content p {
-    font-size: 1.2rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 2rem;
-}
-
 .enter-btn {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     color: #fff;
-    padding: 1rem 3rem;
-    font-family: var(--font-main);
-    font-size: 1rem;
+    padding: 1.2rem 3.5rem;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.5rem;
     letter-spacing: 0.1em;
     cursor: pointer;
-    transition: all 0.4s;
-    text-transform: uppercase;
+    transition: all 0.5s ease;
+    border-radius: 50px;
+    box-shadow: 0 0 30px rgba(100, 200, 255, 0.1);
 }
 
 .enter-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    letter-spacing: 0.15em;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 50px rgba(100, 200, 255, 0.4);
+    transform: scale(1.05);
+    border-color: #fff;
 }
 
-/* --- TYPOGRAPHY & COMPONENTS --- */
-
-h1 {
-    font-size: 3rem;
-    font-weight: 300;
-    letter-spacing: 0.05em;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-    margin-bottom: 1rem;
-}
-
-h2 {
-    font-size: 2rem;
-    font-weight: 200;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 2.5rem;
-}
-
-#message-text {
-    font-size: 1.8rem;
-    line-height: 1.5;
-    max-width: 800px;
-    margin-bottom: 2rem;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-}
+/* ... existing typography ... */
 
 .input-container {
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 1rem;
-    background: var(--glass);
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(10px);
-    transition: transform 0.3s;
-}
-
-.input-container:hover {
-    transform: scale(1.02);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: transparent;
+    /* Removed container bg for cleaner look */
+    margin-bottom: 2rem;
 }
 
 input {
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
     color: #fff;
-    font-size: 2rem;
-    font-family: var(--font-main);
-    width: 60px;
+    font-size: 3rem;
+    font-family: 'Playfair Display', serif;
+    width: 120px;
+    height: 80px;
     text-align: center;
     outline: none;
-}
-
-.submit-arrow {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    opacity: 0.6;
     transition: all 0.3s;
 }
 
-.submit-arrow:hover {
-    opacity: 1;
-    transform: translateX(5px);
+input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* Prominent Describe/Reveal Button */
+.reveal-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 1rem;
+    padding: 1rem 3rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.reveal-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    letter-spacing: 0.3em;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .glass-btn {

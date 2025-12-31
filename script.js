@@ -353,6 +353,7 @@ function processInput() {
 
         // Hide input
         inputContainer.style.display = 'none';
+        submitBtn.style.display = 'none'; // Hide independent button
         document.getElementById('prompt-text').style.display = 'none';
         finishBtn.style.display = 'none';
 
@@ -371,6 +372,7 @@ function processInput() {
 nextBtn.addEventListener('click', () => {
     messageDisplay.classList.add('hidden');
     inputContainer.style.display = 'flex';
+    submitBtn.style.display = 'inline-block'; // Show button again
     document.getElementById('prompt-text').style.display = 'block';
     finishBtn.classList.remove('hidden');
     finishBtn.style.display = 'inline-block';
