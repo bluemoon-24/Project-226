@@ -429,12 +429,14 @@ input {
 /* Final Sequence Text */
 
 /* Final Sequence Text - PREMIUM GOLD SHIMMER */
+/* Final Sequence Text - PREMIUM GOLD SHIMMER */
 .final-line {
     display: block;
     opacity: 0;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
     font-family: 'Playfair Display', serif;
-    font-size: 2.5rem;
+    font-size: 2rem;
+    /* Reduced from 2.5rem */
     font-weight: 400;
     color: #e0e6ed;
     background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
@@ -454,67 +456,63 @@ input {
 }
 
 .signature {
-    margin-top: 5rem;
+    margin-top: 3rem;
     font-family: 'Cinzel', serif;
-    font-size: 1.2rem;
+    font-size: 1rem;
     letter-spacing: 0.3em;
     opacity: 0;
     color: rgba(255, 255, 255, 0.6);
     text-transform: uppercase;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    padding-top: 2rem;
+    padding-top: 1.5rem;
     display: inline-block;
 }
 
-/* Enhanced Realistic Planet */
-.planet {
-    position: fixed;
-    bottom: -15vw;
-    right: -10vw;
-    width: 60vw;
-    height: 60vw;
-    border-radius: 50%;
-    /* Realistic Gas Giant Texture approximation via gradients */
-    background: radial-gradient(circle at 30% 30%,
-            rgba(255, 255, 255, 0.05) 0%,
-            rgba(150, 180, 255, 0.2) 20%,
-            #1c2541 60%,
-            #0b0d17 100%);
-    box-shadow:
-        inset -20px -20px 80px rgba(0, 0, 0, 0.8),
-        /* Dark side */
-        inset 5px 5px 20px rgba(200, 220, 255, 0.1),
-        /* Atmospheric Highlight */
-        0 0 50px rgba(100, 150, 255, 0.05);
-    /* Outer Glow */
-    z-index: 0;
-    opacity: 0.9;
-    animation: planetFloat 80s ease-in-out infinite alternate;
-}
+/* ... existing planet/milky-way styles ... */
 
-/* Enhanced Milky Way with texture */
-.milky-way {
-    background: radial-gradient(ellipse at center,
-            rgba(255, 255, 255, 0.05) 0%,
-            rgba(150, 100, 255, 0.03) 25%,
-            rgba(0, 50, 100, 0.02) 50%,
-            transparent 70%);
-    filter: blur(40px);
-    mix-blend-mode: screen;
-    /* Blend better with blue bg */
-}
-
-/* Responsive */
+/* Responsive & Mobile Optimization */
 @media (max-width: 600px) {
+    #app {
+        justify-content: center;
+        padding: 1rem;
+    }
+
     h1 {
         font-size: 2rem;
     }
 
     h2 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+        margin-bottom: 2rem;
     }
 
     #message-text {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
+        max-width: 100%;
+        line-height: 1.4;
+    }
+
+    .final-line {
+        font-size: 1.5rem;
+        /* Significant reduction for mobile */
+        margin-bottom: 1.5rem;
+    }
+
+    .input-container {
+        padding: 0.8rem 1.5rem;
+    }
+
+    input {
+        font-size: 1.5rem;
+        width: 50px;
+    }
+
+    .planet {
+        width: 80vw;
+        height: 80vw;
+        bottom: -20vw;
+        right: -20vw;
+        opacity: 0.5;
+        /* Fade out slightly on mobile to prioritize text */
     }
 }

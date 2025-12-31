@@ -156,6 +156,55 @@ function initParticles() {
     for (let i = 0; i < 100; i++) particles.push(new Particle());
 }
 
+// Sparkle System
+let sparkles = [];
+
+class Sparkle {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 2 + 1; // slightly larger than stars
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 2 + 1; // burst speed
+        this.vx = Math.cos(angle) * velocity;
+        this.vy = Math.sin(angle) * velocity;
+        this.alpha = 1;
+        this.decay = Math.random() * 0.02 + 0.01;
+    }
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= this.decay;
+        // Gravity? No, space is floaty.
+        // Friction
+        this.vx *= 0.95;
+        this.vy *= 0.95;
+    }
+    draw() {
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = `rgba(200, 230, 255, ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1; // Reset
+    }
+}
+
+function createBurst(x, y) {
+    for (let i = 0; i < 15; i++) {
+        sparkles.push(new Sparkle(x, y));
+    }
+}
+
+// Global click/touch for burst
+document.addEventListener('mousedown', (e) => createBurst(e.clientX, e.clientY));
+// For touch devices
+document.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    createBurst(touch.clientX, touch.clientY);
+}, { passive: true });
+
+
 function animate() {
     // Clear canvas - Transparent so CSS background shows
     ctx.clearRect(0, 0, width, height);
@@ -163,10 +212,62 @@ function animate() {
     // Draw Particles (Background layer)
     particles.forEach(p => { p.update(); p.draw(); });
 
-    // Draw Stars
+    // --- CONSTELLATION EFFECT ---
+    // Connect particles near mouse
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+    ctx.lineWidth = 0.5;
+
+    // We'll use the 'particles' array for connections to not overwhelm with all stars
+    particles.forEach(p => {
+        const dx = p.x - (width / 2 + mouseX / 0.05); // Approximating mouse pos removal of parallax logic reverse... 
+        // Actually simpler: we have mouseX/Y relative to center stored from mousemove listener
+        // Let's just track raw mouse coordinates too for this effect.
+    });
+
+    // Re-doing mouse tracking for canvas logic
+}
+// Fix: We need raw mouse coordinates for constellation
+let rawMouseX = -1000, rawMouseY = -1000;
+document.addEventListener('mousemove', (e) => {
+    rawMouseX = e.clientX;
+    rawMouseY = e.clientY;
+    // Parallax values
+    mouseX = (e.clientX - width / 2) * 0.05;
+    mouseY = (e.clientY - height / 2) * 0.05;
+});
+
+// Redefine animate to include logic properly
+function animate() {
+    ctx.clearRect(0, 0, width, height);
+
+    // 1. Draw Particles & Constellation Connections
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+
+        // Connect to mouse
+        const dist = Math.hypot(p.x - rawMouseX, p.y - rawMouseY);
+        if (dist < 120) {
+            ctx.strokeStyle = `rgba(255, 255, 255, ${1 - dist / 120})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(rawMouseX, rawMouseY);
+            ctx.stroke();
+        }
+    });
+
+    // 2. Draw Stars
     stars.forEach(s => { s.update(); s.draw(); });
 
-    // Random shooting star
+    // 3. Sparkles (Burst)
+    sparkles.forEach((s, i) => {
+        s.update();
+        s.draw();
+        if (s.alpha <= 0) sparkles.splice(i, 1);
+    });
+
+    // 4. Shooting Stars
     if (Math.random() < 0.007) shootingStars.push(new ShootingStar());
 
     shootingStars.forEach((s, i) => {
